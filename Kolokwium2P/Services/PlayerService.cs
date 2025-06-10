@@ -54,4 +54,56 @@ public class PlayerService : IPlayerService
             Matches = matches
         };
     }
+
+    public Task? InsertNewPlayerWithPlayerMatches(InsertPlayerWithPlayerMatchesRequest insertPlayerWithPlayerMatchesRequest)
+    {
+        if (insertPlayerWithPlayerMatchesRequest == null)
+            throw new BadRequestException("Invalid request");
+
+        Player playerToSave = new Player()
+        {
+            FirstName = insertPlayerWithPlayerMatchesRequest.FirstName,
+            LastName = insertPlayerWithPlayerMatchesRequest.LastName,
+            BirthDate = DateTime.Parse(insertPlayerWithPlayerMatchesRequest.BirthDate)
+        };
+        
+        _dbContext.Players.Add(playerToSave);
+        _dbContext.SaveChanges();
+        
+        var playerMatchesToSave = new List<Player_Match>();
+        
+        foreach (var playerMatchRequest in insertPlayerWithPlayerMatchesRequest.Matches)
+        {
+            if (_dbContext.Matches.Find(playerMatchRequest.MatchId) == null)
+            {
+                throw new NotFoundException("Match with id " + playerMatchRequest.MatchId + " not found");
+            }
+            
+            var playerMatchToSave = new Player_Match()
+            {
+                PlayerId = playerToSave.PlayerId,
+                MatchId = playerMatchRequest.MatchId,
+                MVPs = playerMatchRequest.MVPs,
+                Rating = playerMatchRequest.Rating
+            };
+            if (playerMatchToSave.Rating > _dbContext.Matches.Find(playerMatchRequest.MatchId)!.BestRating)
+            {
+                if (playerMatchToSave.Rating > 99.9999m)
+                {
+                    throw new ArgumentException("Provided player match rating is invalid");
+                }
+                _dbContext.Matches.Find(playerMatchRequest.MatchId)!.BestRating = playerMatchToSave.Rating;
+            }
+
+            playerMatchesToSave.Add(playerMatchToSave);
+        }
+        
+
+        _dbContext.PlayerMatches.AddRange(playerMatchesToSave);
+        _dbContext.SaveChanges();
+
+
+
+        return null;
+    }
 }

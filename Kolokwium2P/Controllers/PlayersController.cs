@@ -1,4 +1,5 @@
-﻿using Kolokwium2P.Services;
+﻿using Kolokwium2P.Model.DTO;
+using Kolokwium2P.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kolokwium2P.Controllers;
@@ -20,6 +21,13 @@ public class PlayersController : ControllerBase
     {
         var response = await _playerService.GetPlayerMatchesForGivenIdAsync(id, token);
         return Ok(response);
+    }
+    
+    [HttpPost]
+    public Task<IActionResult> InsertNewPlayerWithPlayerMatches([FromBody] InsertPlayerWithPlayerMatchesRequest insertPlayerWithPlayerMatchesRequest)
+    {
+        _playerService.InsertNewPlayerWithPlayerMatches(insertPlayerWithPlayerMatchesRequest);
+        return Task.FromResult<IActionResult>(Ok());
     }
 }
 

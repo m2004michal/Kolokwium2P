@@ -35,6 +35,7 @@ public class GlobalExceptionHandlingMiddleware
             BadRequestException => StatusCodes.Status400BadRequest,
             NotFoundException => StatusCodes.Status404NotFound,
             ConflictException => StatusCodes.Status409Conflict,
+            ArgumentException => StatusCodes.Status400BadRequest,
             NotImplementedException => StatusCodes.Status501NotImplemented,
             _ => StatusCodes.Status500InternalServerError
         };
