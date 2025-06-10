@@ -3,6 +3,7 @@ using Kolokwium2P.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Kolokwium2P.DAL;
+using Kolokwium2P.Services;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Kolokwium2P;
@@ -28,10 +29,10 @@ public class Program
         });
         
         
-        //registering dependencies
-        // builder.Services.AddScoped<ICustomerService, CustomerService>();
-        // builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();
-        //
+        // registering dependencies
+         builder.Services.AddScoped<IPlayerService, PlayerService>();
+         // builder.Services.AddScoped<IWashingMachineService, WashingMachineService>();
+        
 
 
 
